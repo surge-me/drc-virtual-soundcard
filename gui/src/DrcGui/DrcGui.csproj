@@ -1,0 +1,23 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <OutputType>WinExe</OutputType>
+    <TargetFramework>net8.0-windows</TargetFramework>
+    <UseWPF>true</UseWPF>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <RootNamespace>DrcGui</RootNamespace>
+    <AssemblyName>DrcGui</AssemblyName>
+    <GenerateAssemblyInfo>true</GenerateAssemblyInfo>
+    <SatelliteResourceLanguages>zh-Hans</SatelliteResourceLanguages>
+    <!-- 应用图标（exe 文件图标 + WPF 窗口/任务栏默认图标）。
+         由 scripts/make_icon.py 生成（限幅语义：被天花板削平的正弦波）。 -->
+    <ApplicationIcon>Assets\app.ico</ApplicationIcon>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <!-- 作为资源嵌入，供 Window.Icon / 运行时引用 -->
+    <Resource Include="Assets\app.ico" />
+  </ItemGroup>
+
+</Project>

@@ -1,0 +1,193 @@
+<UserControl x:Class="DrcGui.Pages.DynamicsPage"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:ctl="clr-namespace:DrcGui.Controls">
+    <DockPanel>
+        <StackPanel DockPanel.Dock="Top" Margin="4,0,0,6">
+            <TextBlock Style="{StaticResource TitleText}" Text="动态范围"/>
+            <TextBlock Style="{StaticResource SubText}" Text="限制枪声峰值 · 抬升脚步声电平" Margin="0,6,0,0"/>
+        </StackPanel>
+
+        <Grid>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="430"/>
+            </Grid.ColumnDefinitions>
+
+            <!-- 左列：处理曲线 + 实时电平 + 电平表 -->
+            <Grid>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="*"/>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto"/>
+                </Grid.RowDefinitions>
+
+                <!-- 处理曲线 -->
+                <Border Style="{StaticResource Card}">
+                    <DockPanel>
+                        <StackPanel DockPanel.Dock="Top" Orientation="Horizontal">
+                            <TextBlock Style="{StaticResource SubText}" Text="处理曲线" FontSize="14"/>
+                            <TextBlock Style="{StaticResource DimText}" Text="x=输入 dB · y=输出 dB" Margin="10,3,0,0"/>
+                        </StackPanel>
+                        <Border Background="#1E1E23" CornerRadius="8" Margin="0,10,0,0" ClipToBounds="True">
+                            <Canvas x:Name="CurveCanvas" SizeChanged="OnCurveSizeChanged"/>
+                        </Border>
+                    </DockPanel>
+                </Border>
+
+                <!-- 实时电平（VoiceMeeter 式滚动包络） -->
+                <Border Style="{StaticResource Card}" Margin="0,12,0,0" Grid.Row="1">
+                    <DockPanel>
+                        <StackPanel DockPanel.Dock="Top" Orientation="Horizontal">
+                            <TextBlock Style="{StaticResource SubText}" Text="实时电平" FontSize="14"/>
+                            <TextBlock Style="{StaticResource DimText}" Text="10s · 灰=输入 红=输出 · 红=压限 绿=抬升" Margin="10,3,0,0"/>
+                        </StackPanel>
+                        <Border Background="#1E1E23" CornerRadius="8" Margin="0,10,0,0" ClipToBounds="True">
+                            <Canvas x:Name="LiveCanvas" Height="170" SizeChanged="OnLiveSizeChanged"/>
+                        </Border>
+                    </DockPanel>
+                </Border>
+
+                <!-- 电平表 -->
+                <Border Style="{StaticResource Card}" Margin="0,12,0,0" Grid.Row="2">
+                    <StackPanel>
+                        <StackPanel Orientation="Horizontal">
+                            <TextBlock Style="{StaticResource SubText}" Text="电平监控" FontSize="14"/>
+                            <TextBlock Style="{StaticResource DimText}" Text="输入 / 输出 · 峰值保持 · 30fps" Margin="10,3,0,0"/>
+                        </StackPanel>
+
+                        <Grid Margin="0,12,0,0">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="44"/>
+                                <ColumnDefinition Width="*"/>
+                                <ColumnDefinition Width="70"/>
+                            </Grid.ColumnDefinitions>
+                            <TextBlock Style="{StaticResource BodyText}" Text="输入" VerticalAlignment="Center"/>
+                            <Grid Grid.Column="1" Height="14" ClipToBounds="True">
+                                <Border Background="#2A2A30" CornerRadius="4"/>
+                                <Border x:Name="InFill" Background="{StaticResource GreenBrush}" CornerRadius="4"
+                                        Width="0" HorizontalAlignment="Left"/>
+                                <Rectangle x:Name="InPeak" Fill="White" Width="2" RadiusX="1" HorizontalAlignment="Left"/>
+                            </Grid>
+                            <TextBlock x:Name="InVal" Style="{StaticResource BodyText}" Grid.Column="2"
+                                       Text="—" HorizontalAlignment="Right" VerticalAlignment="Center"/>
+                        </Grid>
+
+                        <Grid Margin="0,8,0,0">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="44"/>
+                                <ColumnDefinition Width="*"/>
+                                <ColumnDefinition Width="70"/>
+                            </Grid.ColumnDefinitions>
+                            <TextBlock Style="{StaticResource BodyText}" Text="输出" VerticalAlignment="Center"/>
+                            <Grid Grid.Column="1" Height="14" ClipToBounds="True">
+                                <Border Background="#2A2A30" CornerRadius="4"/>
+                                <Border x:Name="OutFill" Background="{StaticResource RedLightBrush}" CornerRadius="4"
+                                        Width="0" HorizontalAlignment="Left"/>
+                                <Rectangle x:Name="OutPeak" Fill="White" Width="2" RadiusX="1" HorizontalAlignment="Left"/>
+                            </Grid>
+                            <TextBlock x:Name="OutVal" Style="{StaticResource BodyText}" Grid.Column="2"
+                                       Text="—" HorizontalAlignment="Right" VerticalAlignment="Center"/>
+                        </Grid>
+
+                        <Grid Margin="0,8,0,0">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="44"/>
+                                <ColumnDefinition Width="*"/>
+                                <ColumnDefinition Width="70"/>
+                            </Grid.ColumnDefinitions>
+                            <TextBlock Style="{StaticResource BodyText}" Text="抬升" VerticalAlignment="Center"/>
+                            <Grid Grid.Column="1" Height="14" ClipToBounds="True">
+                                <Border Background="#2A2A30" CornerRadius="4"/>
+                                <Border x:Name="BoostFill" Background="{StaticResource GreenBrush}" CornerRadius="4"
+                                        Width="0" HorizontalAlignment="Left"/>
+                            </Grid>
+                            <TextBlock x:Name="BoostVal" Style="{StaticResource BodyText}" Grid.Column="2"
+                                       Text="—" HorizontalAlignment="Right" VerticalAlignment="Center"
+                                       Foreground="{StaticResource GreenBrush}"/>
+                        </Grid>
+                    </StackPanel>
+                </Border>
+            </Grid>
+
+            <!-- 右列：三滑杆（上限 / 下限 / 抬升量）+ 旁路 -->
+            <Grid Margin="12,0,0,0" Grid.Column="1">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="*"/>
+                    <RowDefinition Height="Auto"/>
+                </Grid.RowDefinitions>
+
+                <Border Style="{StaticResource Card}">
+                    <DockPanel>
+                        <TextBlock DockPanel.Dock="Top" Style="{StaticResource SubText}" Text="范围参数" FontSize="14"/>
+                        <Grid Margin="0,14,0,0">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="*"/>
+                                <ColumnDefinition Width="*"/>
+                                <ColumnDefinition Width="*"/>
+                            </Grid.ColumnDefinitions>
+
+                            <!-- ceilingDb -->
+                            <StackPanel>
+                                <TextBlock Style="{StaticResource BodyText}" Text="峰值上限" HorizontalAlignment="Center"/>
+                                <TextBlock Style="{StaticResource DimText}" Text="ceilingDb" HorizontalAlignment="Center" Margin="0,2,0,0" FontSize="11"/>
+                                <Slider x:Name="SlCeiling" Style="{StaticResource VSliderRed}"
+                                        Minimum="-24" Maximum="-1" Height="210" Margin="0,12,0,0"
+                                        TickFrequency="0.5" IsSnapToTickEnabled="True"
+                                        ValueChanged="OnCeilingChanged"/>
+                                <ctl:NumberBox x:Name="NumCeiling" Minimum="-24" Maximum="-1" Step="0.5"
+                                               Decimals="1" Unit="dB" Default="-6"
+                                               Foreground="{StaticResource RedLightBrush}"
+                                               HorizontalAlignment="Center" Margin="0,8,0,0"/>
+                                <TextBlock Style="{StaticResource DimText}" Text="枪声压回此线" HorizontalAlignment="Center" Margin="0,4,0,0"/>
+                            </StackPanel>
+
+                            <!-- floorDb -->
+                            <StackPanel Grid.Column="1">
+                                <TextBlock Style="{StaticResource BodyText}" Text="噪声下限" HorizontalAlignment="Center"/>
+                                <TextBlock Style="{StaticResource DimText}" Text="floorDb" HorizontalAlignment="Center" Margin="0,2,0,0" FontSize="11"/>
+                                <Slider x:Name="SlFloor" Style="{StaticResource VSliderGreen}"
+                                        Minimum="-60" Maximum="-24" Height="210" Margin="0,12,0,0"
+                                        TickFrequency="0.5" IsSnapToTickEnabled="True"
+                                        ValueChanged="OnFloorChanged"/>
+                                <ctl:NumberBox x:Name="NumFloor" Minimum="-60" Maximum="-24" Step="0.5"
+                                               Decimals="1" Unit="dB" Default="-40"
+                                               Foreground="{StaticResource GreenBrush}"
+                                               HorizontalAlignment="Center" Margin="0,8,0,0"/>
+                                <TextBlock Style="{StaticResource DimText}" Text="脚步抬向此线" HorizontalAlignment="Center" Margin="0,4,0,0"/>
+                            </StackPanel>
+
+                            <!-- maxBoostDb（抬升量）：主页直接可调，不再埋在设置页 -->
+                            <StackPanel Grid.Column="2">
+                                <TextBlock Style="{StaticResource BodyText}" Text="抬升量" HorizontalAlignment="Center"/>
+                                <TextBlock Style="{StaticResource DimText}" Text="maxBoostDb" HorizontalAlignment="Center" Margin="0,2,0,0" FontSize="11"/>
+                                <Slider x:Name="SlBoost" Style="{StaticResource VSliderGreen}"
+                                        Minimum="0" Maximum="24" Height="210" Margin="0,12,0,0"
+                                        TickFrequency="1" IsSnapToTickEnabled="True"
+                                        ValueChanged="OnBoostChanged"/>
+                                <ctl:NumberBox x:Name="NumBoost" Minimum="0" Maximum="24" Step="1"
+                                               Decimals="0" Unit="dB" Default="10"
+                                               Foreground="{StaticResource GreenBrush}"
+                                               HorizontalAlignment="Center" Margin="0,8,0,0"/>
+                                <TextBlock Style="{StaticResource DimText}" Text="最多抬这么多" HorizontalAlignment="Center" Margin="0,4,0,0"/>
+                            </StackPanel>
+                        </Grid>
+                    </DockPanel>
+                </Border>
+
+                <!-- 旁路 -->
+                <Border Style="{StaticResource Card}" Margin="0,12,0,0" Grid.Row="1">
+                    <DockPanel>
+                        <StackPanel DockPanel.Dock="Left" VerticalAlignment="Center">
+                            <TextBlock Style="{StaticResource BodyText}" Text="旁路处理" FontWeight="SemiBold"/>
+                            <TextBlock Style="{StaticResource DimText}" Text="bypass · 输出与输入逐样本一致" Margin="0,4,0,0"/>
+                        </StackPanel>
+                        <ToggleButton x:Name="SwBypass" Style="{StaticResource SwitchOrange}"
+                                      HorizontalAlignment="Right" VerticalAlignment="Center"
+                                      Checked="OnBypassToggled" Unchecked="OnBypassToggled"/>
+                    </DockPanel>
+                </Border>
+            </Grid>
+        </Grid>
+    </DockPanel>
+</UserControl>

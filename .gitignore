@@ -1,0 +1,66 @@
+# ============================================================================
+# DRC 虚拟声卡 — 公开仓排除集
+# 原则：只提交"可从源码重建"的东西；本机运行时数据、抓包原始产物、构建输出不入仓。
+# ============================================================================
+
+# ---- 构建产物（可重建）----
+/build/
+/build-mutant/
+**/bin/
+**/obj/
+.vs/
+*.user
+*.suo
+
+# ---- 交付包（可重建：dotnet publish + 手工拷 router，见 README「构建」）----
+/dist/
+
+# ---- 本机运行时数据：含本机音频端点 GUID / 注册表与 ACL 备份，只对本机有意义 ----
+gui/config/drc-config.json
+installer/backup/
+
+# ---- 逆向实验原始产物：本机 Procmon 抓包 2.7 GB + 第三方工具二进制 ----
+/tools/
+
+# ---- 实验中间产物（可重跑生成）----
+*.pml
+*.etl
+*.log
+*.bak
+*.bak-*
+*.tmp
+tests/apo/e2e_tones/*.wav
+
+# ---- AI 助手工作区 / Python 缓存 ----
+/.codebuddy/
+__pycache__/
+*.pyc
+
+# ---- 隐私防线（2026-10-15：公开仓清理）----
+# 本机排查脚本与抓包/快照：一律不进仓（放 tools/_private/，见 .gitignore 的 tools/ 规则）
+scripts/p2_*
+scripts/*.csv
+scripts/*.etl
+scripts/*snapshot*
+# 全屏/托盘截图：会带出桌面、任务栏、其它软件图标
+docs/devlogs/shots/*desktop*
+docs/devlogs/shots/*flyout*
+docs/devlogs/shots/*tray-icons*
+
+# ---- 本机构建目录（不进仓）----
+/build-ninja/
+/build-dsp/
+/build-nmake/
+
+# ---- 公开仓只放源码：内部文档 / 任务卡 / 截图 / 开发脚本一律不发布（保留在本机）----
+/docs/
+/scripts/
+/INDEX.md
+/AGENTS.md
+/交付说明.md
+/tools/
+/build-ninja/
+/build-nmake/
+/build-mutant/
+/build/
+/dist/

@@ -1,0 +1,9 @@
+# 字节保真优先：本仓以 md5 + 行数做取证基线，禁止 git 做行尾 / 编码转换
+# （一旦自动转换，工作区字节数会变 ⇒ 所有已记录的 md5 基线失效）
+* -text
+
+# 明确按二进制处理（不做 diff/合并）
+*.png  binary
+*.ico  binary
+*.wav  binary
+*.cer  binary

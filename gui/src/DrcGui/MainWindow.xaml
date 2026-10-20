@@ -1,0 +1,67 @@
+<Window x:Class="DrcGui.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:pages="clr-namespace:DrcGui.Pages"
+        Title="DRC 动态范围控制"
+        Icon="Assets/app.ico"
+        Width="1000" Height="680" MinWidth="920" MinHeight="620"
+        Background="{StaticResource BgBrush}"
+        FontFamily="Microsoft YaHei UI"
+        WindowStartupLocation="CenterScreen">
+    <WindowChrome.WindowChrome>
+        <WindowChrome CaptionHeight="42" ResizeBorderThickness="6"
+                      GlassFrameThickness="0" CornerRadius="0" UseAeroCaptionButtons="False"/>
+    </WindowChrome.WindowChrome>
+
+    <DockPanel>
+        <!-- 标题栏 -->
+        <Border DockPanel.Dock="Top" Height="42" Background="#141417">
+            <Grid>
+                <StackPanel Orientation="Horizontal" Margin="14,0,0,0" VerticalAlignment="Center">
+                    <!-- 标题栏标志 = 应用图标（与 exe 图标 / 托盘图标同源，视觉对齐） -->
+                    <Image Source="Assets/app.ico" Width="22" Height="22"
+                           RenderOptions.BitmapScalingMode="HighQuality"/>
+                    <TextBlock Text="DRC 动态范围控制" Foreground="{StaticResource TextMainBrush}"
+                               FontSize="13" FontWeight="SemiBold" Margin="10,0,0,0" VerticalAlignment="Center"/>
+                </StackPanel>
+                <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" VerticalAlignment="Center" Margin="0,0,8,0">
+                    <Button Style="{StaticResource CaptionMinBtn}" Content="—" ToolTip="最小化" Click="OnMinimize"/>
+                    <Button Style="{StaticResource CaptionCloseBtn}" Content="✕" ToolTip="关闭到托盘" Click="OnCloseToTray"/>
+                </StackPanel>
+            </Grid>
+        </Border>
+
+        <DockPanel>
+            <!-- 侧栏 -->
+            <Border DockPanel.Dock="Left" Width="190" Background="{StaticResource SideBrush}">
+                <DockPanel>
+                    <StackPanel DockPanel.Dock="Bottom" Margin="16,0,16,16">
+                        <StackPanel Orientation="Horizontal">
+                            <Ellipse x:Name="StatusDot" Width="10" Height="10" Fill="{StaticResource TextDimBrush}"
+                                     Margin="0,0,8,0" VerticalAlignment="Center"/>
+                            <TextBlock x:Name="StatusText" Text="未接管" FontSize="12"
+                                       Foreground="{StaticResource TextDimBrush}" VerticalAlignment="Center"/>
+                        </StackPanel>
+                        <TextBlock Text="v1.0 · Global\DrcApoSharedMem_v1" FontSize="10"
+                                   Foreground="#4A4A52" Margin="0,6,0,0"/>
+                    </StackPanel>
+                    <StackPanel Margin="0,20,0,0">
+                        <RadioButton x:Name="NavDynamics" Style="{StaticResource NavBtn}" GroupName="nav"
+                                     Content="动态范围" IsChecked="True" Checked="OnNav"/>
+                        <RadioButton x:Name="NavEq" Style="{StaticResource NavBtn}" GroupName="nav"
+                                     Content="均衡器 EQ" Checked="OnNav"/>
+                        <RadioButton x:Name="NavSettings" Style="{StaticResource NavBtn}" GroupName="nav"
+                                     Content="设置" Checked="OnNav"/>
+                    </StackPanel>
+                </DockPanel>
+            </Border>
+
+            <!-- 内容区 -->
+            <Grid Margin="16">
+                <pages:DynamicsPage x:Name="PageDynamics"/>
+                <pages:EqPage x:Name="PageEq" Visibility="Collapsed"/>
+                <pages:SettingsPage x:Name="PageSettings" Visibility="Collapsed"/>
+            </Grid>
+        </DockPanel>
+    </DockPanel>
+</Window>

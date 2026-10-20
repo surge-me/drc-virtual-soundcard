@@ -1,0 +1,7 @@
+; DrcApo.def — COM in-proc server 标准导出
+LIBRARY DrcApo
+EXPORTS
+    DllGetClassObject   PRIVATE
+    DllCanUnloadNow     PRIVATE
+    DllRegisterServer   PRIVATE
+    DllUnregisterServer PRIVATE
