@@ -13,6 +13,14 @@
     <!-- 应用图标（exe 文件图标 + WPF 窗口/任务栏默认图标）。
          由 scripts/make_icon.py 生成（限幅语义：被天花板削平的正弦波）。 -->
     <ApplicationIcon>Assets\app.ico</ApplicationIcon>
+    <!-- 版本信息（Release 打包用；文件属性里可见） -->
+    <Version>1.0.0</Version>
+    <FileVersion>1.0.0.0</FileVersion>
+    <AssemblyVersion>1.0.0.0</AssemblyVersion>
+    <Product>DRC 虚拟声卡</Product>
+    <Description>Windows 用户态音频动态范围控制器</Description>
+    <Company>DRC</Company>
+    <Copyright>MIT License</Copyright>
   </PropertyGroup>
 
   <ItemGroup>

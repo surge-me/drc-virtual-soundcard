@@ -16,7 +16,7 @@ public static class WinIntegration
     //   {a45c254e...},0  → 空
     //   {a45c254e...},2  → 端点描述（"扬声器" / "CABLE Input" / "Headphones"）
     //   {a45c254e...},14 → 空
-    //   {b3f8fa53...},6  → 适配器名（"<耳机>" / "VB-Audio Virtual Cable" / …）
+    //   {b3f8fa53...},6  → 适配器名（"USB 耳机" / "VB-Audio Virtual Cable" / …）
     // 端点描述会重名（三个设备都是「扬声器」）⇒ 必须带适配器名才能区分。
     // 显示名 = 描述 + " (" + 适配器 + ")"，与 Windows 声音设置、以及 router 侧
     // PKEY_Device_FriendlyName 合成的完整名一致（router 的 --render 就按该串匹配）。

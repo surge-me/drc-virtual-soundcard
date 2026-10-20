@@ -80,7 +80,7 @@ public sealed class RouterHost : IDisposable
     /// 「输出设备」下拉选中设备传给 router `--render` 的匹配串。**只认首选**（不含兜底）。
     /// router 的匹配口径 = `PKEY_Device_FriendlyName + " " + PKEY_Device_DeviceDesc`
     /// （见 router/src/wasapi.cpp FindEndpointByName）；其中 FriendlyName 是 Windows 合成的
-    /// 「端点描述 (适配器名)」—— 实测即 "扬声器 (<耳机>)" ⇒ 传同构的 DisplayName 精确命中。
+    /// 「端点描述 (适配器名)」—— 实测即 "扬声器 (USB 耳机)" ⇒ 传同构的 DisplayName 精确命中。
     /// 未选 / 选中的是虚拟线自身 / 设备当前枚举不到 ⇒ null。
     /// </summary>
     public static string? OutputDeviceName()
@@ -105,7 +105,7 @@ public sealed class RouterHost : IDisposable
         return false;
     }
 
-    /// <summary>兜底输出 = 枚举顺序里第一个**非虚拟线**的可用渲染端点（本机即板载 <板载声卡> 输出）。</summary>
+    /// <summary>兜底输出 = 枚举顺序里第一个**非虚拟线**的可用渲染端点（本机即板载声卡输出）。</summary>
     public static (string Id, string Name)? FallbackOutput()
     {
         foreach (var d in WinIntegration.EnumerateRenderDevices())

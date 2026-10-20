@@ -23,6 +23,7 @@
 #include <shellapi.h>
 
 #include <atomic>
+#include <clocale>
 #include <cstdio>
 #include <cstdlib>
 #include <string>
@@ -80,11 +81,14 @@ void PrintEndpoints(const char* title, const std::vector<router::EndpointInfo>& 
 }  /* namespace */
 
 int main() {
+    /* 宽字符输出（wprintf / %ls）走 CRT 转换：locale 不是 UTF-8 时中文会被转成 '?'（实测设备名全变 ???）。
+     * .UTF8 locale + UTF-8 控制台代码页 ⇒ 中文设备名在控制台和管道里都能正确显示。 */
+    std::setlocale(LC_ALL, ".UTF8");
     SetConsoleOutputCP(CP_UTF8);
     SetConsoleCtrlHandler(CtrlHandler, TRUE);
 
     /* 参数来源必须是 Unicode 命令行：CRT 的 argv 按 ANSI 代码页解码，
-     * 中文设备名（如「扬声器 <耳机>」）会被解成错误字符 ⇒ --render 永远匹配不到（实测 exit 4）。 */
+     * 中文设备名（如「扬声器 (USB 耳机)」）会被解成错误字符 ⇒ --render 永远匹配不到（实测 exit 4）。 */
     int wargc = 0;
     LPWSTR* wargv = CommandLineToArgvW(GetCommandLineW(), &wargc);
     if (wargv == nullptr) {

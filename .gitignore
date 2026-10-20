@@ -64,3 +64,6 @@ docs/devlogs/shots/*tray-icons*
 /build-mutant/
 /build/
 /dist/
+
+# ---- 发布产物（不进仓，走 GitHub Release）----
+/out/
