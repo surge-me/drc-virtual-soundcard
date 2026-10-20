@@ -36,17 +36,6 @@ tests/apo/e2e_tones/*.wav
 __pycache__/
 *.pyc
 
-# ---- 隐私防线（2026-10-15：公开仓清理）----
-# 本机排查脚本与抓包/快照：一律不进仓（放 tools/_private/，见 .gitignore 的 tools/ 规则）
-scripts/p2_*
-scripts/*.csv
-scripts/*.etl
-scripts/*snapshot*
-# 全屏/托盘截图：会带出桌面、任务栏、其它软件图标
-docs/devlogs/shots/*desktop*
-docs/devlogs/shots/*flyout*
-docs/devlogs/shots/*tray-icons*
-
 # ---- 本机构建目录（不进仓）----
 /build-ninja/
 /build-dsp/
