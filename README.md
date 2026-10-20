@@ -6,6 +6,10 @@
 ![driver](https://img.shields.io/badge/kernel%20driver-none-success)
 ![license](https://img.shields.io/badge/license-MIT-green)
 ![tests](https://img.shields.io/badge/ctest-13%2F13%20passing-success)
+![release](https://img.shields.io/github/v/release/surge-me/drc-virtual-soundcard?label=release)
+
+> **只想用，不想编译？** 去 [**Releases**](https://github.com/surge-me/drc-virtual-soundcard/releases/latest)
+> 下 `DRC-VirtualSoundcard-*-win-x64.zip`，解压双击 `DrcGui.exe` 即可（自包含，不用装 .NET）。
 
 > **TL;DR (English)** — A user-mode Windows audio dynamic-range controller. It captures game/system audio
 > from a virtual cable, runs a lookahead limiter (peaks back down to `ceilingDb`), an upward compander
@@ -90,7 +94,15 @@ DRC 做的不是整体调音量，而是**压缩动态范围**——对音频按
 
 ## 5. 快速开始
 
-### 获取源码
+### 方式 A：下载现成包（推荐给普通用户）
+
+到 [Releases](https://github.com/surge-me/drc-virtual-soundcard/releases/latest) 下载
+`DRC-VirtualSoundcard-<版本>-win-x64.zip` → 解压到任意目录（**不要**放 `C:\Program Files`，
+那里需要管理员权限，配置和日志会写不进去）→ 双击 `DrcGui.exe`。
+
+包内自带 `使用说明.txt`，写清了首次配置、热键、调参建议和卸载步骤。
+
+### 方式 B：从源码构建
 
 ```bat
 git clone https://github.com/surge-me/drc-virtual-soundcard.git
@@ -100,9 +112,10 @@ cd drc-virtual-soundcard
 ### 前置
 
 - Windows 10 / 11 x64（**实测环境：Windows 11 24H2**；Win10 未验证）
-- [.NET 8 Desktop Runtime](https://dotnet.microsoft.com/download/dotnet/8.0)（跑 GUI；框架依赖发布）
-- 一条虚拟声卡：本仓用 **VB-CABLE**（第三方 Donationware，**本仓不内置、不再分发**，请自行获取）
-- 想自己构建：Visual Studio 2022（C++ 桌面工作负载）+ CMake ≥ 3.15 + .NET 8 SDK
+- 一条虚拟声卡：**VB-CABLE**（第三方 Donationware，**本仓不内置、不分发**；GUI 里有「一键获取」）
+- 只有走方式 B 才需要：[.NET 8 SDK](https://dotnet.microsoft.com/download/dotnet/8.0)
+  + Visual Studio 2022（C++ 桌面工作负载）+ CMake ≥ 3.15
+  （方式 A 的包是自包含发布，不需要装 .NET 运行时）
 
 ### 三步启用
 
@@ -245,7 +258,7 @@ DrcRouter.exe [--capture <子串>] [--render <子串>]
 - **真人听感未做双盲验收**：DSP 行为由 golden vectors 与数值断言守护（如 0 dBFS → -6.000 dBFS 等于 `ceiling`、-60 dBFS → -50.0 dBFS 等于 `floor`、EQ ±6 dB @1k 实测 ±6.000 dB、旁路逐样本一致），但"好不好听"仍需你自己听。
 - **端点自愈的真机物理拔插未验收**：本机无法在不影响用户链路的前提下禁用端点（`pnputil` 三条路径实测全废），端到端验证用路由进程自带的故障注入钩子（真进程 / 真 WASAPI 双端点 / 真阈值 / 真重连，只有"端点死亡信号"是模拟的），并配变异体对照。
 - **"无线耳机只关机"这类场景无法自动降级**：实测此时 Windows 侧零信号（端点仍 Active、PnP 无异常、问题码 0、USB 计数不变），所以只能提供"一键切换"而非自动切换。
-- **无安装器**：卸载 = 删目录 + 删快捷方式。发布为框架依赖（需本机有 .NET 8 Desktop Runtime）；自包含发布未实测。
+- **无安装器**：卸载 = 删目录 + 删快捷方式。发布包为**自包含**（`win-x64`，无需装 .NET 运行时），体积约 62 MB。
 - **Windows 10 未验证**：全部实测在 Windows 11 24H2 上完成。
 - **单机验证**：所有实测数据来自一台机器（一块 VB-CABLE + 一台 USB 无线耳机 + 板载声卡），换硬件组合可能有差异。
 
