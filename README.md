@@ -1,5 +1,7 @@
 # DRC 虚拟声卡 — Windows 系统级音频动态范围限制器
 
+**中文** | [English](README.en.md)
+
 **枪声压回上限、脚步抬到听得见。** 一条零内核驱动的用户态音频处理链：虚拟线捕获 → 实时 DSP（限幅 + 弱声上抬 + 10 段 EQ）→ 真实输出设备，配 WPF 托盘 GUI、全局热键与实时电平曲线。
 
 ![platform](https://img.shields.io/badge/platform-Windows%2010%2F11%20x64-blue)
